@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - หอพัก</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
+
+        .sidebar {
+            height: 100vh;
+            background-color: #343a40;
+            color: white;
+        }
+
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 10px;
+            text-decoration: none;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .card-box {
+            padding: 20px;
+            color: white;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-2 bg-dark text-white p-3" style="min-height: 100vh">
+                <h5 class="mb-3">เจ้าของหอพัก</h5>
+                <ul class="nav flex-column">
+                    <li class="nav-item"><a class="nav-link text-white" href="admin_dashboard.html">📊 Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="bill.php">📄 ออกแบบบิลรายเดือน</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="manage_tenants.php">👥 จัดการลูกค้ารายเดือน</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="dorm_info.html">🏢 ข้อมูลหอพัก</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="manage_rooms.html">🏘 จัดการห้องพัก</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="admin.php">🛠 จัดการ Admin</a></li>
+                    <li><a href="logout.php" class="nav-link text-danger" style="text-decoration: none;">🚪 ออกจากระบบ</a></li>
+                </ul>
+            </div>
+
+
+
+            <!-- Content -->
+            <div class="col-md-10 content">
+                <h2>:: Dashboard ::</h2>
+
+                <!-- Dashboard Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card-box bg-primary">
+                            <h5>ค่าเช่ารายเดือน</h5>
+                            <p>92,760 บาท</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3">
+                        <div class="card-box bg-success">
+                            <h5>ผู้เช่าปัจจุบัน</h5>
+                            <p>1 ห้อง</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card-box bg-danger">
+                            <h5>จำนวนห้องพัก</h5>
+                            <p>20 รายการ</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="bg-white p-3 shadow-sm rounded">
+                            <h5>รายได้ตามเดือน</h5>
+                            <div id="monthlyChart"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="bg-white p-3 shadow-sm rounded">
+                            <h5>จำนวนลูกค้า</h5>
+                            <div id="customerPie"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        Highcharts.chart('monthlyChart', {
+            chart: { type: 'column' },
+            title: { text: 'รายได้จากค่าเช่าต่อเดือน' },
+            xAxis: {
+                categories: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม']
+            },
+            yAxis: {
+                title: { text: 'รายได้ (บาท)' }
+            },
+            series: [{
+                name: 'รายเดือน',
+                data: [120000, 163570, 52590 ,150000 , 160000 ,158000 , 160070 ,180000 , 200000 , 190000 , 200050 , 220000]
+            }]
+        });
+
+        Highcharts.chart('customerPie', {
+            chart: { type: 'pie' },
+            title: { text: 'สัดส่วนจำนวนผู้เช่า' },
+            series: [{
+                name: 'จำนวน',
+                colorByPoint: true,
+                data: [{
+                    name: 'รายเดือน',
+                    y: 2
+                }]
+            }]
+        });
+
+        fetch('fetch_dashboard.php')
+            .then(res => res.json())
+            .then(data => {
+                document.querySelector('.bg-primary p').innerText = data.monthly + ' บาท';
+                document.querySelector('.bg-info p').innerText = data.daily + ' บาท';
+                document.querySelector('.bg-success p').innerText = data.tenants + ' ห้อง';
+                document.querySelector('.bg-danger p').innerText = data.rooms + ' รายการ';
+            });
+
+    </script>
+</body>
+
+</html>

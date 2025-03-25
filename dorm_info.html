@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ข้อมูลหอพัก</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-5">
+  <h2 class="mb-4">:: ข้อมูลหอพัก ::</h2>
+  <a href="admin_dashboard.html" class="btn btn-secondary mb-3">← กลับหน้า Dashboard</a>
+
+  <form id="dormForm" class="card p-4">
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <label for="dorm_name" class="form-label">ชื่อหอพัก</label>
+        <input type="text" id="dorm_name" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label for="dorm_phone" class="form-label">เบอร์โทรศัพท์</label>
+        <input type="text" id="dorm_phone" class="form-control" required>
+      </div>
+    </div>
+    <div class="mb-3">
+      <label for="dorm_address" class="form-label">ที่อยู่</label>
+      <input type="text" id="dorm_address" class="form-control" required>
+    </div>
+    <div class="mb-3">
+      <label for="dorm_email" class="form-label">อีเมล</label>
+      <input type="email" id="dorm_email" class="form-control" required>
+    </div>
+    <button type="submit" class="btn btn-primary">บันทึกข้อมูล</button>
+  </form>
+
+  <div class="mt-4">
+    <p>จำนวนห้องทั้งหมด: <span id="room_total">-</span></p>
+    <p>จำนวนห้องว่าง: <span id="room_available">-</span></p>
+  </div>
+</div>
+
+<script>
+fetch('fetch_dorm_info.php')
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById('dorm_name').value = data.name;
+    document.getElementById('dorm_address').value = data.address;
+    document.getElementById('dorm_phone').value = data.phone;
+    document.getElementById('dorm_email').value = data.email;
+    document.getElementById('room_total').textContent = data.total_rooms;
+    document.getElementById('room_available').textContent = data.available_rooms;
+  });
+
+document.getElementById('dormForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('dorm_name').value;
+  const address = document.getElementById('dorm_address').value;
+  const phone = document.getElementById('dorm_phone').value;
+  const email = document.getElementById('dorm_email').value;
+
+  fetch('fetch_dorm_info.php', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name, address, phone, email })
+  })
+  .then(res => res.text())
+  .then(msg => {
+    alert(msg);
+  });
+});
+</script>
+</body>
+</html>
